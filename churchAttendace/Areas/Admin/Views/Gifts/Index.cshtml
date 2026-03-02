@@ -1,0 +1,80 @@
+@model GiftsViewModel
+@{
+    ViewData["Title"] = "هدايا الأربع أسابيع";
+    ViewData["PageTitle"] = "هدايا الأربع أسابيع";
+    ViewData["PageSubtitle"] = "الأطفال الذين حضروا 4 أسابيع متتالية أو أكثر";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "هدايا الأربع أسابيع", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="app-card-header d-flex justify-content-between align-items-center">
+        <h2 class="h6 mb-0">قائمة المستحقين للهدية</h2>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted small">الإجمالي: @Model.Children.Count</span>
+            @if (Model.Children.Any())
+            {
+                <form asp-action="MarkAllGiftsDelivered" method="post" onsubmit="return confirm('هل أنت متأكد من تسليم الهدايا لجميع الأطفال (@Model.Children.Count)؟');">
+                    @Html.AntiForgeryToken()
+                    @foreach (var child in Model.Children)
+                    {
+                        <input type="hidden" name="childIds" value="@child.ChildId" />
+                    }
+                    <button type="submit" class="btn btn-primary btn-sm app-btn">
+                        <i class="bi bi-gift-fill"></i>
+                        تسليم الكل
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table app-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>المرحلة</th>
+                    <th>الفصل</th>
+                    <th>اسم الطفل</th>
+                    <th>عدد الأسابيع المتتالية</th>
+                    <th>آخر جلسة في السلسلة</th>
+                    <th class="text-end">تسليم الهدية</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Children.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            لا يوجد حالياً أطفال حضروا 4 أسابيع متتالية.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Children)
+                    {
+                        <tr>
+                            <td>@item.StageName</td>
+                            <td>@item.ClassName</td>
+                            <td>@item.ChildName</td>
+                            <td>@item.ConsecutiveWeeks</td>
+                            <td>@item.LastSessionDate?.ToString("yyyy/MM/dd")</td>
+                            <td class="text-end">
+                                <form asp-action="MarkGiftDelivered" method="post" asp-route-childId="@item.ChildId">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-success btn-sm app-btn" title="بعد الضغط يُزال من القائمة ويُعاد العد من جديد (4 أسابيع متتالية بعد آخر تسليم)">
+                                        <i class="bi bi-gift"></i>
+                                        تم تسليم الهدية
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

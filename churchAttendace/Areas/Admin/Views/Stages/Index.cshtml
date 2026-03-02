@@ -1,0 +1,98 @@
+@model IEnumerable<churchAttendace.Models.Entities.Stage>
+@{
+    ViewData["Title"] = "المراحل";
+    ViewData["PageTitle"] = "إدارة المراحل";
+    ViewData["PageSubtitle"] = "إضافة وتحديث مراحل الخدمة";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "المراحل", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp mb-4">
+    <div class="app-card-header">
+        <div>
+            <h2 class="h6 mb-1">بحث في المراحل</h2>
+            <div class="text-muted small">اكتب اسم المرحلة للبحث السريع</div>
+        </div>
+        <a class="btn btn-primary app-btn" asp-action="Create">
+            <i class="bi bi-plus-circle"></i>
+            إضافة مرحلة
+        </a>
+    </div>
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="form-label">بحث</label>
+            <input name="search" value="@ViewData["Search"]" class="form-control" placeholder="اسم المرحلة" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <button type="submit" class="btn btn-outline-primary app-btn">
+                <i class="bi bi-search"></i>
+                بحث
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="table-responsive">
+        <table class="table app-table align-middle">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>الوصف</th>
+                    <th>الحالة</th>
+                    <th class="text-end">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">لا توجد مراحل مسجلة حتى الآن.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success-subtle text-success">نشط</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-muted">غير نشط</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2 flex-wrap">
+                                    <a class="btn btn-outline-secondary app-btn btn-sm" asp-action="Details" asp-route-id="@item.Id">
+                                        <i class="bi bi-eye"></i>
+                                        عرض
+                                    </a>
+                                    <a class="btn btn-outline-primary app-btn btn-sm" asp-action="Edit" asp-route-id="@item.Id">
+                                        <i class="bi bi-pencil"></i>
+                                        تعديل
+                                    </a>
+                                    <form asp-action="Deactivate" asp-route-id="@item.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger app-btn btn-sm">
+                                            <i class="bi bi-x-circle"></i>
+                                            تعطيل
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

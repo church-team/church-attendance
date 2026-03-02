@@ -1,0 +1,117 @@
+@model ConsecutiveAttendanceReportViewModel
+@{
+    ViewData["Title"] = "سلاسل الحضور";
+    ViewData["PageTitle"] = "سلاسل الحضور";
+    ViewData["PageSubtitle"] = "متابعة أطول السلاسل المتتالية للحضور";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "التقارير", Url = Url.Action("Index") },
+        new() { Title = "سلاسل الحضور", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp mb-4">
+    <div class="app-card-header">
+        <div>
+            <h2 class="h6 mb-1">فلاتر التقرير</h2>
+            <div class="text-muted small">اختر الفترة والمرحلة والفصل</div>
+        </div>
+        <form asp-action="ExportConsecutiveAttendance" method="post" class="d-flex gap-2 flex-wrap">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="From" value="@Model.Filters.From?.ToString("yyyy-MM-dd")" />
+            <input type="hidden" name="To" value="@Model.Filters.To?.ToString("yyyy-MM-dd")" />
+            <input type="hidden" name="StageId" value="@Model.Filters.StageId" />
+            <input type="hidden" name="ClassId" value="@Model.Filters.ClassId" />
+            <button type="submit" name="format" value="excel" class="btn btn-outline-success app-btn">
+                <i class="bi bi-file-earmark-excel"></i>
+                Excel
+            </button>
+            <button type="submit" name="format" value="pdf" class="btn btn-outline-danger app-btn">
+                <i class="bi bi-file-earmark-pdf"></i>
+                PDF
+            </button>
+        </form>
+    </div>
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-12 col-md-6 col-lg-3">
+            <label class="form-label">من تاريخ</label>
+            <input type="date" name="From" value="@Model.Filters.From?.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <label class="form-label">إلى تاريخ</label>
+            <input type="date" name="To" value="@Model.Filters.To?.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <label class="form-label">المرحلة</label>
+            <select name="StageId" class="form-select">
+                <option value="">كل المراحل</option>
+                @if (ViewData["Stages"] is SelectList stages)
+                {
+                    foreach (var option in stages)
+                    {
+                        <option value="@option.Value" selected="@(option.Value == (Model.Filters.StageId?.ToString() ?? string.Empty))">@option.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <label class="form-label">الفصل</label>
+            <select name="ClassId" class="form-select">
+                <option value="">كل الفصول</option>
+                @if (ViewData["Classes"] is SelectList classes)
+                {
+                    foreach (var option in classes)
+                    {
+                        <option value="@option.Value" selected="@(option.Value == (Model.Filters.ClassId?.ToString() ?? string.Empty))">@option.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-outline-primary app-btn">
+                <i class="bi bi-filter"></i>
+                تصفية
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="table-responsive">
+        <table class="table app-table align-middle">
+            <thead>
+                <tr>
+                    <th>المرحلة</th>
+                    <th>الفصل</th>
+                    <th>الطفل</th>
+                    <th>أطول سلسلة حضور</th>
+                    <th>السلسلة الحالية</th>
+                    <th>آخر جلسة</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Rows.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">لا توجد بيانات مطابقة للفلاتر المحددة.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var row in Model.Rows)
+                    {
+                        <tr>
+                            <td>@row.StageName</td>
+                            <td>@row.ClassName</td>
+                            <td>@row.ChildName</td>
+                            <td>@row.LongestStreak</td>
+                            <td>@row.CurrentStreak</td>
+                            <td>@(row.LastSessionDate?.ToString("yyyy/MM/dd") ?? "-")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

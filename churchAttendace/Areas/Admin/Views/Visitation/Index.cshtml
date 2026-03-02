@@ -1,0 +1,88 @@
+@model VisitationViewModel
+@{
+    ViewData["Title"] = "خدمة الافتقاد";
+    ViewData["PageTitle"] = "خدمة الافتقاد";
+    ViewData["PageSubtitle"] = "الأطفال الغائبون عن آخر جلستين متتاليتين";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "خدمة الافتقاد", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="app-card-header d-flex justify-content-between align-items-center">
+        <h2 class="h6 mb-0">قائمة الأطفال المطلوب افتقادهم</h2>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted small">الإجمالي: @Model.Children.Count</span>
+            @if (Model.Children.Any())
+            {
+                <form asp-action="ToggleAllContacted" method="post" onsubmit="return confirm('هل أنت متأكد من تسجيل الاتصال بجميع الأطفال (@Model.Children.Count)؟');">
+                    @Html.AntiForgeryToken()
+                    @foreach (var child in Model.Children)
+                    {
+                        <input type="hidden" name="childIds" value="@child.ChildId" />
+                    }
+                    <button type="submit" class="btn btn-success btn-sm app-btn">
+                        <i class="bi bi-telephone-check"></i>
+                        تم الاتصال بالكل
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table app-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>المرحلة</th>
+                    <th>الفصل</th>
+                    <th>اسم الطفل</th>
+                    <th>هاتف ولي الأمر</th>
+                    <th>هاتف الطفل</th>
+                    <th>آخر غياب</th>
+                    <th class="text-end">تم الاتصال</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Children.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            لا توجد حالياً حالات غياب متتالية تستدعي الافتقاد.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Children)
+                    {
+                        <tr>
+                            <td>@item.StageName</td>
+                            <td>@item.ClassName</td>
+                            <td>@item.ChildName</td>
+                            <td>@item.ParentPhoneNumber</td>
+                            <td>@(string.IsNullOrWhiteSpace(item.ChildPhoneNumber) ? "-" : item.ChildPhoneNumber)</td>
+                            <td>@item.LastAbsentDate?.ToString("yyyy/MM/dd")</td>
+                            <td class="text-end">
+                                <form asp-action="ToggleContacted" method="post" asp-route-childId="@item.ChildId" asp-antiforgery="true">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="childId" value="@item.ChildId" />
+                                    <button type="submit" class="btn btn-danger btn-sm app-btn" title="بعد الضغط سيُزال من القائمة ويُعاد إظهاره عند غيابين متتاليين مرة أخرى">
+                                        <i class="bi bi-telephone-x"></i>
+                                        لم يتم الاتصال
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+

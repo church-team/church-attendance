@@ -1,0 +1,39 @@
+@model IEnumerable<churchAttendace.Models.Entities.Announcement>
+@{
+    Layout = "_HomeLayout";
+    ViewData["Title"] = "الاعلانات";
+}
+<div class="container">
+    <div class="app-card animate__animated animate__fadeInUp mb-4">
+        <div class="app-card-header">
+            <h1 class="h5 mb-0">
+                <i class="bi bi-megaphone me-2"></i>
+                الاعلانات
+            </h1>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="app-card animate__animated animate__fadeInUp">
+            <div class="p-4 text-center text-muted">
+                لا توجد إعلانات حالياً.
+            </div>
+        </div>
+    }
+    else
+    {
+        foreach (var item in Model)
+        {
+            <div class="app-card animate__animated animate__fadeInUp mb-3">
+                <div class="app-card-header">
+                    <h2 class="h6 mb-0">@item.Title</h2>
+                    <span class="text-muted small">@item.CreatedAt.ToString("yyyy/MM/dd")</span>
+                </div>
+                <div class="p-3 pt-0">
+                    <p class="mb-0" style="white-space: pre-line;">@item.Body</p>
+                </div>
+            </div>
+        }
+    }
+</div>

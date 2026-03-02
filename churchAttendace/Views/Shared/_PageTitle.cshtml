@@ -1,0 +1,17 @@
+@{
+    var pageTitle = ViewData["PageTitle"]?.ToString();
+    var pageSubtitle = ViewData["PageSubtitle"]?.ToString();
+}
+
+@if (!string.IsNullOrWhiteSpace(pageTitle))
+{
+    <div class="page-title-row mb-4">
+        <div>
+            <h1 class="h3 mb-1">@pageTitle</h1>
+            @if (!string.IsNullOrWhiteSpace(pageSubtitle))
+            {
+                <div class="text-muted small">@pageSubtitle</div>
+            }
+        </div>
+    </div>
+}

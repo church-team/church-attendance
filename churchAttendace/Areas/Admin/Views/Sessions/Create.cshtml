@@ -1,0 +1,56 @@
+@model churchAttendace.Models.Entities.Session
+@{
+    ViewData["Title"] = "إضافة جلسة";
+    ViewData["PageTitle"] = "إضافة جلسة جديدة";
+    ViewData["PageSubtitle"] = "تحديد تاريخ الجلسة والفصل";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "الجلسات", Url = Url.Action("Index") },
+        new() { Title = "إضافة", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div class="row g-3">
+            <div class="col-12 col-lg-6">
+                <label asp-for="SessionName" class="form-label">اسم الجلسة</label>
+                <input asp-for="SessionName" class="form-control" />
+                <span asp-validation-for="SessionName" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label asp-for="ClassId" class="form-label">الفصل</label>
+                <select asp-for="ClassId" class="form-select" asp-items="@(ViewData["ClassId"] as SelectList)">
+                    <option value="">اختر الفصل</option>
+                </select>
+                <span asp-validation-for="ClassId" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-4">
+                <label asp-for="SessionDate" class="form-label">تاريخ الجلسة</label>
+                <input asp-for="SessionDate" type="date" class="form-control" />
+                <span asp-validation-for="SessionDate" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Notes" class="form-label">ملاحظات</label>
+                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Notes" class="text-danger small"></span>
+            </div>
+        </div>
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary app-btn">
+                <i class="bi bi-check-circle"></i>
+                حفظ
+            </button>
+            <a class="btn btn-outline-secondary app-btn" asp-action="Index">
+                <i class="bi bi-x-circle"></i>
+                إلغاء
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

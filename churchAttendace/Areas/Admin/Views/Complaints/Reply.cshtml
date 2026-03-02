@@ -1,0 +1,39 @@
+@model churchAttendace.Models.Entities.Complaint
+@{
+    ViewData["Title"] = Model.RepliedAt.HasValue ? "تعديل الرد" : "الرد على الشكوى/المقترح";
+    ViewData["PageTitle"] = Model.RepliedAt.HasValue ? "تعديل الرد" : "الرد على الشكوى/المقترح";
+    ViewData["PageSubtitle"] = "الرد سيظهر على الصفحة الرئيسية للزوار.";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "الشكاوى والمقترحات", Url = Url.Action("Index") },
+        new() { Title = "الرد", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="app-card-header">
+        <h2 class="h6 mb-0">الشكوى/المقترح</h2>
+    </div>
+    <div class="p-4 border-bottom">
+        <p class="mb-0" style="white-space: pre-line;">@Model.Text</p>
+        <small class="text-muted">@Model.CreatedAt.ToString("yyyy/MM/dd HH:mm")</small>
+    </div>
+    <form asp-action="Reply" asp-route-id="@Model.Id" method="post" class="p-4">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label for="replyText" class="form-label">نص الرد (سيظهر للجميع على الصفحة الرئيسية)</label>
+            <textarea name="replyText" id="replyText" class="form-control" rows="5" placeholder="اكتب رد الإدارة هنا...">@Model.Reply</textarea>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary app-btn">
+                <i class="bi bi-check-circle"></i>
+                حفظ الرد
+            </button>
+            <a class="btn btn-outline-secondary app-btn" asp-action="Index">
+                <i class="bi bi-x-circle"></i>
+                إلغاء
+            </a>
+        </div>
+    </form>
+</div>

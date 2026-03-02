@@ -1,0 +1,79 @@
+@model IEnumerable<churchAttendace.Models.Entities.Complaint>
+@{
+    ViewData["Title"] = "الشكاوى والمقترحات";
+    ViewData["PageTitle"] = "إدارة الشكاوى والمقترحات";
+    ViewData["PageSubtitle"] = "عرض الرد على الشكاوى والمقترحات الواردة من الصفحة الرئيسية. الردود تظهر للجميع على الصفحة الرئيسية.";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "الشكاوى والمقترحات", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp mb-4">
+    <div class="app-card-header">
+        <div>
+            <h2 class="h6 mb-1">قائمة الشكاوى والمقترحات</h2>
+            <div class="text-muted small">اضغط «رد» للرد على أي شكوى أو مقترح. الرد سيظهر على الصفحة الرئيسية للزوار.</div>
+        </div>
+    </div>
+</div>
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="table-responsive">
+        <table class="table app-table align-middle">
+            <thead>
+                <tr>
+                    <th style="min-width: 200px;">نص الشكوى/المقترح</th>
+                    <th>التاريخ</th>
+                    <th>الحالة</th>
+                    <th class="text-end">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">لا توجد شكاوى أو مقترحات حتى الآن.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="small" style="white-space: pre-line; max-width: 320px;">@(item.Text.Length > 120 ? item.Text.Substring(0, 120) + "…" : item.Text)</td>
+                            <td>@item.CreatedAt.ToString("yyyy/MM/dd HH:mm")</td>
+                            <td>
+                                @if (item.RepliedAt.HasValue)
+                                {
+                                    <span class="badge bg-success">تم الرد</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">في انتظار الرد</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                @if (!item.RepliedAt.HasValue)
+                                {
+                                    <a class="btn btn-primary app-btn btn-sm" asp-action="Reply" asp-route-id="@item.Id">
+                                        <i class="bi bi-reply"></i>
+                                        رد
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-outline-secondary app-btn btn-sm" asp-action="Reply" asp-route-id="@item.Id">
+                                        <i class="bi bi-pencil"></i>
+                                        تعديل الرد
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

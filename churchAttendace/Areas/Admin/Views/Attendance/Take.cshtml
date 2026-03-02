@@ -1,0 +1,76 @@
+@model AttendanceViewModel
+@{
+    ViewData["Title"] = "تسجيل حضور الجلسة";
+    ViewData["PageTitle"] = "تسجيل حضور الجلسة";
+    ViewData["PageSubtitle"] = $"{Model.ClassName} - {Model.SessionDate:yyyy/MM/dd}";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "تسجيل الحضور", Url = Url.Action("Index") },
+        new() { Title = "تسجيل", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="app-card-header">
+        <div>
+            <h2 class="h6 mb-1">@Model.SessionName</h2>
+            <div class="text-muted small">تاريخ الجلسة: @Model.SessionDate.ToString("yyyy/MM/dd")</div>
+        </div>
+        <span class="badge bg-info-subtle text-info">@Model.ClassName</span>
+    </div>
+
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="SessionId" />
+        <input type="hidden" asp-for="SessionName" />
+        <input type="hidden" asp-for="SessionDate" />
+        <input type="hidden" asp-for="ClassName" />
+
+        <div class="table-responsive">
+            <table class="table app-table align-middle">
+                <thead>
+                    <tr>
+                        <th>الطفل</th>
+                        <th>الحضور</th>
+                        <th>ملاحظات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.Children.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Children[i].FullName
+                                <input type="hidden" asp-for="Children[@i].ChildId" />
+                                <input type="hidden" asp-for="Children[@i].FullName" />
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input asp-for="Children[@i].IsPresent" class="form-check-input" />
+                                    <label class="form-check-label">
+                                        @(Model.Children[i].IsPresent ? "حاضر" : "غائب")
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <input asp-for="Children[@i].Notes" class="form-control" placeholder="ملاحظات مختصرة" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary app-btn">
+                <i class="bi bi-check-circle"></i>
+                حفظ
+            </button>
+            <a class="btn btn-outline-secondary app-btn" asp-action="Index">
+                <i class="bi bi-x-circle"></i>
+                إلغاء
+            </a>
+        </div>
+    </form>
+</div>

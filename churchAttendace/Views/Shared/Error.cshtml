@@ -1,0 +1,23 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "خطأ";
+    ViewData["PageTitle"] = "حدث خطأ غير متوقع";
+    ViewData["PageSubtitle"] = "يرجى المحاولة مرة أخرى أو التواصل مع المسؤول";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "خطأ", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="app-card-header">
+        <h2 class="h6 mb-0 text-danger">تعذر إكمال الطلب</h2>
+    </div>
+    <p class="mb-3">حدث خطأ أثناء معالجة طلبك. يرجى إعادة المحاولة لاحقاً.</p>
+    @if (Model.ShowRequestId)
+    {
+        <p class="text-muted small">
+            رقم التتبع: <code>@Model.RequestId</code>
+        </p>
+    }
+</div>

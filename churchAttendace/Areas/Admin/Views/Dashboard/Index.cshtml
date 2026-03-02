@@ -1,0 +1,100 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "لوحة التحكم";
+    ViewData["PageTitle"] = "لوحة التحكم";
+    ViewData["PageSubtitle"] = "نظرة عامة على بيانات الحضور";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", IsActive = true }
+    };
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="app-card animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">عدد المراحل</div>
+                    <div class="h4 mb-0">@Model.StagesCount</div>
+                </div>
+                <i class="bi bi-diagram-3 fs-2 text-primary"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="app-card animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">عدد الفصول</div>
+                    <div class="h4 mb-0">@Model.ClassesCount</div>
+                </div>
+                <i class="bi bi-people fs-2 text-success"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="app-card animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">عدد الأطفال</div>
+                    <div class="h4 mb-0">@Model.ChildrenCount</div>
+                </div>
+                <i class="bi bi-person-hearts fs-2 text-info"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="app-card animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">الجلسات النشطة</div>
+                    <div class="h4 mb-0">@Model.SessionsCount</div>
+                </div>
+                <i class="bi bi-calendar-event fs-2 text-warning"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-6">
+        <div class="app-card animate__animated animate__fadeInUp h-100">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="h6 mb-1">حضور الشهر الحالي</h2>
+                    <div class="text-muted small">ملخص للحضور المسجل هذا الشهر</div>
+                </div>
+                <i class="bi bi-clipboard-check text-success"></i>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="display-6">@Model.AttendanceThisMonth</div>
+                <span class="badge bg-success-subtle text-success">نسبة الحضور @Model.AttendanceRate%</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="app-card animate__animated animate__fadeInUp h-100">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="h6 mb-1">الإجراءات السريعة</h2>
+                    <div class="text-muted small">انتقل سريعاً إلى أهم الشاشات</div>
+                </div>
+                <i class="bi bi-lightning-charge text-primary"></i>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-primary app-btn" asp-controller="Attendance" asp-action="Index">
+                    <i class="bi bi-clipboard-check"></i>
+                    تسجيل الحضور
+                </a>
+                <a class="btn btn-outline-primary app-btn" asp-controller="Sessions" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i>
+                    إضافة جلسة
+                </a>
+                <a class="btn btn-outline-secondary app-btn" asp-controller="Reports" asp-action="Index">
+                    <i class="bi bi-bar-chart"></i>
+                    التقارير
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

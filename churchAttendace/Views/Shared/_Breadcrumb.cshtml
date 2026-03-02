@@ -1,0 +1,25 @@
+@using churchAttendace.Models.ViewModels
+@{
+    var breadcrumbs = ViewData["Breadcrumbs"] as List<BreadcrumbItem>;
+}
+
+@if (breadcrumbs != null && breadcrumbs.Any())
+{
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb app-card animate__animated animate__fadeIn">
+            @foreach (var crumb in breadcrumbs)
+            {
+                if (crumb.IsActive || string.IsNullOrWhiteSpace(crumb.Url))
+                {
+                    <li class="breadcrumb-item active" aria-current="page">@crumb.Title</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item">
+                        <a href="@crumb.Url">@crumb.Title</a>
+                    </li>
+                }
+            }
+        </ol>
+    </nav>
+}

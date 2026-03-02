@@ -1,0 +1,118 @@
+@model IEnumerable<churchAttendace.Models.Entities.Child>
+@{
+    ViewData["Title"] = "الأطفال";
+    ViewData["PageTitle"] = "إدارة الأطفال";
+    ViewData["PageSubtitle"] = "متابعة بيانات الأطفال وأولياء الأمور";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "الأطفال", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp mb-3">
+    <div class="app-card-header">
+        <h2 class="h6 mb-0 d-none d-md-block">بحث وفلترة</h2>
+        <h2 class="h6 mb-0 d-md-none">بحث</h2>
+        <a class="btn btn-primary app-btn" asp-action="Create">
+            <i class="bi bi-plus-circle"></i>
+            إضافة طفل
+        </a>
+    </div>
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="form-label d-none d-md-block small">بحث</label>
+            <input name="search" value="@ViewData["Search"]" class="form-control form-control-sm" placeholder="اسم الطفل أو ولي الأمر" />
+        </div>
+        <div class="col-6 col-md-6 col-lg-4">
+            <label class="form-label d-none d-md-block small">المرحلة</label>
+            <select name="stageId" class="form-select form-select-sm">
+                <option value="">كل المراحل</option>
+                @if (ViewData["Stages"] is SelectList stages)
+                {
+                    foreach (var option in stages)
+                    {
+                        <option value="@option.Value" selected="@(option.Value == (ViewData["StageId"]?.ToString() ?? string.Empty))">@option.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-6 col-lg-4">
+            <label class="form-label d-none d-md-block small">الفصل</label>
+            <select name="classId" class="form-select form-select-sm">
+                <option value="">كل الفصول</option>
+                @if (ViewData["Classes"] is SelectList classes)
+                {
+                    foreach (var option in classes)
+                    {
+                        <option value="@option.Value" selected="@(option.Value == (ViewData["ClassId"]?.ToString() ?? string.Empty))">@option.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-outline-primary app-btn btn-sm">
+                <i class="bi bi-filter"></i>
+                تصفية
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="table-responsive">
+        <table class="table app-table app-table-mobile-ready align-middle">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>الفصل</th>
+                    <th>هاتف ولي الأمر</th>
+                    <th class="text-end">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">لا يوجد أطفال مسجلون حالياً.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var child in Model)
+                    {
+                        <tr>
+                            <td data-label="الاسم">
+                                <div class="d-flex align-items-start justify-content-between gap-2">
+                                    <span class="flex-grow-1">@child.FullName</span>
+                                    <span class="badge bg-primary d-md-none">@child.Class?.Name</span>
+                                </div>
+                            </td>
+                            <td data-label="الفصل" class="d-none d-md-table-cell">@child.Class?.Name</td>
+                            <td data-label="هاتف ولي الأمر">@child.ParentPhoneNumber</td>
+                            <td data-label="">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a class="btn btn-outline-secondary btn-sm" asp-action="Details" asp-route-id="@child.Id" title="عرض">
+                                        <i class="bi bi-eye"></i>
+                                        <span class="ms-1">عرض</span>
+                                    </a>
+                                    <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@child.Id" title="تعديل">
+                                        <i class="bi bi-pencil"></i>
+                                        <span class="ms-1">تعديل</span>
+                                    </a>
+                                    <form asp-action="Deactivate" asp-route-id="@child.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="تعطيل">
+                                            <i class="bi bi-x-circle"></i>
+                                            <span class="ms-1">تعطيل</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

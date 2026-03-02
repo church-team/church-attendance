@@ -1,0 +1,84 @@
+@model churchAttendace.Models.Entities.Child
+@{
+    ViewData["Title"] = "تعديل طفل";
+    ViewData["PageTitle"] = "تعديل بيانات الطفل";
+    ViewData["PageSubtitle"] = "تحديث البيانات الأساسية للطفل";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "الأطفال", Url = Url.Action("Index") },
+        new() { Title = "تعديل", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div class="row g-3">
+            <div class="col-12 col-lg-6">
+                <label asp-for="FullName" class="form-label">اسم الطفل</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label asp-for="ClassId" class="form-label">الفصل</label>
+                <select asp-for="ClassId" class="form-select" asp-items="@(ViewData["ClassId"] as SelectList)">
+                    <option value="">اختر الفصل</option>
+                </select>
+                <span asp-validation-for="ClassId" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label asp-for="ParentName" class="form-label">اسم ولي الأمر</label>
+                <input asp-for="ParentName" class="form-control" />
+                <span asp-validation-for="ParentName" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label asp-for="ParentPhoneNumber" class="form-label">هاتف ولي الأمر</label>
+                <input asp-for="ParentPhoneNumber" class="form-control" />
+                <span asp-validation-for="ParentPhoneNumber" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label asp-for="PhoneNumber" class="form-label">هاتف الطفل (اختياري)</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label asp-for="BirthDate" class="form-label">تاريخ الميلاد</label>
+                <input asp-for="BirthDate" type="date" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label asp-for="Address" class="form-label">العنوان</label>
+                <textarea asp-for="Address" class="form-control"></textarea>
+                <span asp-validation-for="Address" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label asp-for="Points" class="form-label">عدد النقاط</label>
+                <input asp-for="Points" type="number" min="0" class="form-control" />
+                <span asp-validation-for="Points" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-4">
+                <label class="form-label">الحالة</label>
+                <select asp-for="IsActive" class="form-select">
+                    <option value="true">نشط</option>
+                    <option value="false">غير نشط</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary app-btn">
+                <i class="bi bi-check-circle"></i>
+                حفظ
+            </button>
+            <a class="btn btn-outline-secondary app-btn" asp-action="Index">
+                <i class="bi bi-x-circle"></i>
+                إلغاء
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

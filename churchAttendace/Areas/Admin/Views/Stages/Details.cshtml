@@ -1,0 +1,82 @@
+@model churchAttendace.Models.Entities.Stage
+@{
+    ViewData["Title"] = "تفاصيل المرحلة";
+    ViewData["PageTitle"] = "تفاصيل المرحلة";
+    ViewData["PageSubtitle"] = "عرض بيانات المرحلة والفصول التابعة";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "المراحل", Url = Url.Action("Index") },
+        new() { Title = "تفاصيل", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp mb-4">
+    <div class="app-card-header">
+        <div>
+            <h2 class="h6 mb-1">@Model.Name</h2>
+            <div class="text-muted small">@Model.Description</div>
+        </div>
+        <span class="badge @(Model.IsActive ? "bg-success-subtle text-success" : "bg-secondary-subtle text-muted")">
+            @(Model.IsActive ? "نشط" : "غير نشط")
+        </span>
+    </div>
+    <div class="row g-3">
+        <div class="col-12 col-md-4">
+            <div class="text-muted small">تاريخ الإنشاء</div>
+            <div>@Model.CreatedAt.ToString("yyyy/MM/dd")</div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="text-muted small">آخر تحديث</div>
+            <div>@(Model.UpdatedAt?.ToString("yyyy/MM/dd") ?? "-")</div>
+        </div>
+    </div>
+</div>
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="app-card-header">
+        <h3 class="h6 mb-0">الفصول التابعة</h3>
+        <span class="text-muted small">عدد الفصول: @Model.Classes.Count</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table app-table align-middle">
+            <thead>
+                <tr>
+                    <th>الفصل</th>
+                    <th>الوصف</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Classes.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">لا توجد فصول مسجلة لهذه المرحلة.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var cls in Model.Classes)
+                    {
+                        <tr>
+                            <td>@cls.Name</td>
+                            <td>@cls.Description</td>
+                            <td>@(cls.IsActive ? "نشط" : "غير نشط")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a class="btn btn-outline-primary app-btn" asp-action="Edit" asp-route-id="@Model.Id">
+        <i class="bi bi-pencil"></i>
+        تعديل
+    </a>
+    <a class="btn btn-outline-secondary app-btn" asp-action="Index">
+        <i class="bi bi-arrow-right-circle"></i>
+        العودة
+    </a>
+</div>

@@ -1,0 +1,81 @@
+@model IEnumerable<churchAttendace.Models.Entities.AuditLog>
+@{
+    ViewData["Title"] = "سجل المراجعة";
+    ViewData["PageTitle"] = "سجل المراجعة";
+    ViewData["PageSubtitle"] = "متابعة التغييرات والأنشطة الأخيرة";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "سجل المراجعة", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp mb-4">
+    <div class="app-card-header">
+        <div>
+            <h2 class="h6 mb-1">فلترة السجل</h2>
+            <div class="text-muted small">ابحث عن الجدول أو رقم السجل</div>
+        </div>
+    </div>
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="form-label">بحث</label>
+            <input name="search" value="@ViewData["Search"]" class="form-control" placeholder="اسم الجدول أو رقم السجل" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="form-label">نوع الإجراء</label>
+            <select name="actionType" class="form-select">
+                <option value="">كل الإجراءات</option>
+                <option value="Create" selected="@(ViewData["ActionType"]?.ToString() == "Create")">إضافة</option>
+                <option value="Update" selected="@(ViewData["ActionType"]?.ToString() == "Update")">تعديل</option>
+                <option value="Delete" selected="@(ViewData["ActionType"]?.ToString() == "Delete")">حذف</option>
+                <option value="SoftDelete" selected="@(ViewData["ActionType"]?.ToString() == "SoftDelete")">تعطيل</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <button type="submit" class="btn btn-outline-primary app-btn">
+                <i class="bi bi-filter"></i>
+                تصفية
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="table-responsive">
+        <table class="table app-table align-middle">
+            <thead>
+                <tr>
+                    <th>الجدول</th>
+                    <th>المعرف</th>
+                    <th>الإجراء</th>
+                    <th>المستخدم</th>
+                    <th>التاريخ</th>
+                    <th>تفاصيل</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">لا يوجد سجلات مراجعة حالياً.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.TableName</td>
+                            <td>@item.RecordId</td>
+                            <td>@item.Action</td>
+                            <td>@(item.User?.Email ?? "-")</td>
+                            <td>@item.Timestamp.ToString("yyyy/MM/dd HH:mm")</td>
+                            <td class="text-muted small">@((item.ChangesJson ?? string.Empty).Length > 50 ? item.ChangesJson!.Substring(0, 50) + "..." : item.ChangesJson)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

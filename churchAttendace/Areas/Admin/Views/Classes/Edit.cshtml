@@ -1,0 +1,59 @@
+@model churchAttendace.Models.Entities.Class
+@{
+    ViewData["Title"] = "تعديل فصل";
+    ViewData["PageTitle"] = "تعديل الفصل";
+    ViewData["PageSubtitle"] = "تحديث بيانات الفصل المحدد";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "الفصول", Url = Url.Action("Index") },
+        new() { Title = "تعديل", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div class="row g-3">
+            <div class="col-12 col-lg-6">
+                <label asp-for="Name" class="form-label">اسم الفصل</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label asp-for="StageId" class="form-label">المرحلة</label>
+                <select asp-for="StageId" class="form-select" asp-items="@(ViewData["StageId"] as SelectList)">
+                    <option value="">اختر المرحلة</option>
+                </select>
+                <span asp-validation-for="StageId" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Description" class="form-label">الوصف</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+            <div class="col-12 col-lg-4">
+                <label class="form-label">الحالة</label>
+                <select asp-for="IsActive" class="form-select">
+                    <option value="true">نشط</option>
+                    <option value="false">غير نشط</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary app-btn">
+                <i class="bi bi-check-circle"></i>
+                حفظ
+            </button>
+            <a class="btn btn-outline-secondary app-btn" asp-action="Index">
+                <i class="bi bi-x-circle"></i>
+                إلغاء
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

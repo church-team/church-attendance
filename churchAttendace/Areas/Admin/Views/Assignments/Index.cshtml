@@ -1,0 +1,217 @@
+@model AssignmentViewModel
+@{
+    ViewData["Title"] = "التعيينات";
+    ViewData["PageTitle"] = "تعيين المشرفين والخدام";
+    ViewData["PageSubtitle"] = "إدارة توزيع المسؤوليات على المراحل والفصول";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "التعيينات", IsActive = true }
+    };
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-lg-6">
+        <div class="app-card animate__animated animate__fadeInUp">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="h6 mb-1">تعيين مشرف مرحلة</h2>
+                    <div class="text-muted small">ربط مشرف بمرحلة محددة</div>
+                </div>
+            </div>
+            <form asp-action="AddStageManager" method="post" class="row g-2 align-items-end">
+                @Html.AntiForgeryToken()
+                <div class="col-12 col-md-6">
+                    <label class="form-label">المشرف</label>
+                    <select name="userId" class="form-select" asp-items="Model.ManagerOptions">
+                        <option value="">اختر مشرفاً</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label">المرحلة</label>
+                    <select name="stageId" class="form-select" asp-items="Model.StageOptions">
+                        <option value="">اختر مرحلة</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary app-btn">
+                        <i class="bi bi-check-circle"></i>
+                        حفظ
+                    </button>
+                </div>
+            </form>
+            <hr class="my-3" />
+            <form asp-action="CreateStageManagerUser" method="post" class="row g-2">
+                @Html.AntiForgeryToken()
+                <div class="col-12">
+                    <div class="text-muted small mb-1">إضافة مشرف جديد ليظهر في القائمة بالأعلى</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label">بريد المشرف الجديد</label>
+                    <input name="newManagerEmail" type="email" class="form-control" placeholder="example@domain.com" />
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label">كلمة مرور المشرف الجديد</label>
+                    <input name="newManagerPassword" type="password" class="form-control" placeholder="كلمة مرور قوية" />
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-outline-primary app-btn">
+                        <i class="bi bi-person-plus"></i>
+                        حفظ كجديد
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="app-card animate__animated animate__fadeInUp">
+            <div class="app-card-header">
+                <div>
+                    <h2 class="h6 mb-1">تعيين خادم فصل</h2>
+                    <div class="text-muted small">ربط خادم بفصل محدد</div>
+                </div>
+            </div>
+            <form asp-action="AddClassServant" method="post" class="row g-2 align-items-end">
+                @Html.AntiForgeryToken()
+                <div class="col-12 col-md-6">
+                    <label class="form-label">الخادم</label>
+                    <select name="userId" class="form-select" asp-items="Model.ServantOptions">
+                        <option value="">اختر خادماً</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label">الفصل</label>
+                    <select name="classId" class="form-select" asp-items="Model.ClassOptions">
+                        <option value="">اختر فصلاً</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary app-btn">
+                        <i class="bi bi-check-circle"></i>
+                        حفظ
+                    </button>
+                </div>
+            </form>
+            <hr class="my-3" />
+            <form asp-action="CreateServantUser" method="post" class="row g-2">
+                @Html.AntiForgeryToken()
+                <div class="col-12">
+                    <div class="text-muted small mb-1">إضافة خادم جديد ليظهر في القائمة بالأعلى</div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label">بريد الخادم الجديد</label>
+                    <input name="newServantEmail" type="email" class="form-control" placeholder="example@domain.com" />
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label">كلمة مرور الخادم الجديد</label>
+                    <input name="newServantPassword" type="password" class="form-control" placeholder="كلمة مرور قوية" />
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-outline-primary app-btn">
+                        <i class="bi bi-person-plus"></i>
+                        حفظ كجديد
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-6">
+        <div class="app-card animate__animated animate__fadeInUp">
+            <div class="app-card-header">
+                <h3 class="h6 mb-0">المشرفون المعينون</h3>
+                <span class="text-muted small">الإجمالي: @Model.StageManagers.Count</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table app-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>المشرف</th>
+                            <th>المرحلة</th>
+                            <th>تاريخ التعيين</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.StageManagers.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">لا توجد تعيينات حالياً.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model.StageManagers)
+                            {
+                                <tr>
+                                    <td>@item.ManagerEmail</td>
+                                    <td>@item.StageName</td>
+                                    <td>@item.AssignedAt.ToString("yyyy/MM/dd")</td>
+                                    <td class="text-end">
+                                        <form asp-action="DeactivateStageManager" asp-route-id="@item.Id" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button class="btn btn-outline-danger app-btn btn-sm">
+                                                <i class="bi bi-x-circle"></i>
+                                                إلغاء
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="app-card animate__animated animate__fadeInUp">
+            <div class="app-card-header">
+                <h3 class="h6 mb-0">الخدام المعينون</h3>
+                <span class="text-muted small">الإجمالي: @Model.ClassServants.Count</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table app-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>الخادم</th>
+                            <th>الفصل</th>
+                            <th>تاريخ التعيين</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.ClassServants.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">لا توجد تعيينات حالياً.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model.ClassServants)
+                            {
+                                <tr>
+                                    <td>@item.ServantEmail</td>
+                                    <td>@item.ClassName</td>
+                                    <td>@item.AssignedAt.ToString("yyyy/MM/dd")</td>
+                                    <td class="text-end">
+                                        <form asp-action="DeactivateClassServant" asp-route-id="@item.Id" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button class="btn btn-outline-danger app-btn btn-sm">
+                                                <i class="bi bi-x-circle"></i>
+                                                إلغاء
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

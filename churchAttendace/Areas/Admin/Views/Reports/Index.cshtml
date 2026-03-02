@@ -1,0 +1,69 @@
+@{
+    ViewData["Title"] = "التقارير";
+    ViewData["PageTitle"] = "مركز التقارير";
+    ViewData["PageSubtitle"] = "اختيار نوع التقرير المناسب للعرض أو التصدير";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "التقارير", IsActive = true }
+    };
+}
+
+<div class="row g-3">
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="app-card h-100 animate__animated animate__fadeInUp">
+            <div class="app-card-header">
+                <h3 class="h6 mb-0">تقرير الجلسات</h3>
+            </div>
+            <div class="p-3">
+                <p class="text-muted small">ملخص حضور كل جلسة مع نسب الحضور.</p>
+                <a class="btn btn-primary app-btn w-100" asp-action="Sessions">
+                    <i class="bi bi-calendar-event"></i>
+                    عرض التقرير
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="app-card h-100 animate__animated animate__fadeInUp">
+            <div class="app-card-header">
+                <h3 class="h6 mb-0">شبكة الحضور</h3>
+            </div>
+            <div class="p-3">
+                <p class="text-muted small">عرض تفاصيل حضور الأطفال لكل جلسة.</p>
+                <a class="btn btn-primary app-btn w-100" asp-action="AttendanceGrid">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                    عرض التقرير
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="app-card h-100 animate__animated animate__fadeInUp">
+            <div class="app-card-header">
+                <h3 class="h6 mb-0">تقرير الغياب</h3>
+            </div>
+            <div class="p-3">
+                <p class="text-muted small">الأطفال الأكثر غياباً خلال الفترة.</p>
+                <a class="btn btn-primary app-btn w-100" asp-action="AbsentChildren">
+                    <i class="bi bi-person-x"></i>
+                    عرض التقرير
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+        <div class="app-card h-100 animate__animated animate__fadeInUp">
+            <div class="app-card-header">
+                <h3 class="h6 mb-0">سلاسل الحضور</h3>
+            </div>
+            <div class="p-3">
+                <p class="text-muted small">متابعة أطول سلاسل حضور متتالية.</p>
+                <a class="btn btn-primary app-btn w-100" asp-action="ConsecutiveAttendance">
+                    <i class="bi bi-graph-up"></i>
+                    عرض التقرير
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

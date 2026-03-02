@@ -1,0 +1,106 @@
+@model IEnumerable<churchAttendace.Models.Entities.Class>
+@{
+    ViewData["Title"] = "الفصول";
+    ViewData["PageTitle"] = "إدارة الفصول";
+    ViewData["PageSubtitle"] = "تنظيم الفصول وربطها بالمراحل";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "الفصول", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp mb-4">
+    <div class="app-card-header">
+        <div>
+            <h2 class="h6 mb-1">بحث في الفصول</h2>
+            <div class="text-muted small">فلترة النتائج حسب المرحلة أو الاسم</div>
+        </div>
+        <a class="btn btn-primary app-btn" asp-action="Create">
+            <i class="bi bi-plus-circle"></i>
+            إضافة فصل
+        </a>
+    </div>
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="form-label">بحث</label>
+            <input name="search" value="@ViewData["Search"]" class="form-control" placeholder="اسم الفصل" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="form-label">المرحلة</label>
+            <select name="stageId" class="form-select">
+                <option value="">كل المراحل</option>
+                @if (ViewData["Stages"] is SelectList stages)
+                {
+                    foreach (var option in stages)
+                    {
+                        <option value="@option.Value" selected="@(option.Value == (ViewData["StageId"]?.ToString() ?? string.Empty))">@option.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <button type="submit" class="btn btn-outline-primary app-btn">
+                <i class="bi bi-filter"></i>
+                تصفية
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="table-responsive">
+        <table class="table app-table align-middle">
+            <thead>
+                <tr>
+                    <th>اسم الفصل</th>
+                    <th>المرحلة</th>
+                    <th>الحالة</th>
+                    <th class="text-end">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">لا توجد فصول مسجلة حتى الآن.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Stage?.Name</td>
+                            <td>
+                                <span class="badge @(item.IsActive ? "bg-success-subtle text-success" : "bg-secondary-subtle text-muted")">
+                                    @(item.IsActive ? "نشط" : "غير نشط")
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2 flex-wrap">
+                                    <a class="btn btn-outline-secondary app-btn btn-sm" asp-action="Details" asp-route-id="@item.Id">
+                                        <i class="bi bi-eye"></i>
+                                        عرض
+                                    </a>
+                                    <a class="btn btn-outline-primary app-btn btn-sm" asp-action="Edit" asp-route-id="@item.Id">
+                                        <i class="bi bi-pencil"></i>
+                                        تعديل
+                                    </a>
+                                    <form asp-action="Deactivate" asp-route-id="@item.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger app-btn btn-sm">
+                                            <i class="bi bi-x-circle"></i>
+                                            تعطيل
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

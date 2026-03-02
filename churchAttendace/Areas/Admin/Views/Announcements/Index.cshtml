@@ -1,0 +1,78 @@
+@model IEnumerable<churchAttendace.Models.Entities.Announcement>
+@{
+    ViewData["Title"] = "الاعلانات";
+    ViewData["PageTitle"] = "إدارة الاعلانات";
+    ViewData["PageSubtitle"] = "إضافة وعرض الإعلانات التي تظهر في صفحة الاعلانات للزوار";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new() { Title = "لوحة التحكم", Url = Url.Action("Index", "Dashboard", new { area = "Admin" }) },
+        new() { Title = "الاعلانات", IsActive = true }
+    };
+}
+
+<div class="app-card animate__animated animate__fadeInUp mb-4">
+    <div class="app-card-header">
+        <div>
+            <h2 class="h6 mb-1">قائمة الاعلانات</h2>
+            <div class="text-muted small">الإعلانات النشطة تظهر في صفحة الاعلانات على الموقع</div>
+        </div>
+        <a class="btn btn-primary app-btn" asp-action="Create">
+            <i class="bi bi-plus-circle"></i>
+            إضافة اعلان
+        </a>
+    </div>
+</div>
+
+<div class="app-card animate__animated animate__fadeInUp">
+    <div class="table-responsive">
+        <table class="table app-table align-middle">
+            <thead>
+                <tr>
+                    <th>العنوان</th>
+                    <th>المحتوى</th>
+                    <th>التاريخ</th>
+                    <th>الحالة</th>
+                    <th class="text-end">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">لا توجد إعلانات حتى الآن. اضغط «إضافة اعلان» لإنشاء أول إعلان.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td class="text-muted small" style="max-width: 280px;">@(item.Body.Length > 80 ? item.Body.Substring(0, 80) + "…" : item.Body)</td>
+                            <td>@item.CreatedAt.ToString("yyyy/MM/dd")</td>
+                            <td>
+                                @if (item.IsActive)
+                                { <span class="badge bg-success">نشط</span> }
+                                else
+                                { <span class="badge bg-secondary">غير نشط</span> }
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-outline-primary app-btn btn-sm" asp-action="Edit" asp-route-id="@item.Id">
+                                    <i class="bi bi-pencil"></i>
+                                    تعديل
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-danger app-btn btn-sm" onclick="return confirm('هل تريد حذف هذا الإعلان؟');">
+                                        <i class="bi bi-trash"></i>
+                                        حذف
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
