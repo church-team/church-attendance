@@ -39,7 +39,7 @@ namespace churchAttendace.Areas.Admin.Controllers
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where(c => c.FullName.Contains(search) || c.ParentName.Contains(search));
+                query = query.Where(c => c.FullName.Contains(search) || (c.ParentName != null && c.ParentName.Contains(search)));
             }
 
             if (classId.HasValue)

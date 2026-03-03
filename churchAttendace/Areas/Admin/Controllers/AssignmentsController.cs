@@ -55,14 +55,24 @@ namespace churchAttendace.Areas.Admin.Controllers
                 })
                 .ToListAsync();
 
+            var stageManagerUsers = (await _userManager.GetUsersInRoleAsync("StageManager"))
+                .Where(u => u.IsActive)
+                .OrderBy(u => u.Email)
+                .ToList();
+            
+            var servantUsers = (await _userManager.GetUsersInRoleAsync("Servant"))
+                .Where(u => u.IsActive)
+                .OrderBy(u => u.Email)
+                .ToList();
+
             var model = new AssignmentViewModel
             {
                 StageManagers = stageManagers,
                 ClassServants = classServants,
                 StageOptions = new SelectList(await _context.Stages.OrderBy(s => s.Name).ToListAsync(), "Id", "Name"),
                 ClassOptions = new SelectList(await _context.Classes.OrderBy(c => c.Name).ToListAsync(), "Id", "Name"),
-                ManagerOptions = new SelectList(await _userManager.GetUsersInRoleAsync("StageManager"), "Id", "Email"),
-                ServantOptions = new SelectList(await _userManager.GetUsersInRoleAsync("Servant"), "Id", "Email")
+                ManagerOptions = new SelectList(stageManagerUsers, "Id", "Email"),
+                ServantOptions = new SelectList(servantUsers, "Id", "Email")
             };
 
             return View(model);

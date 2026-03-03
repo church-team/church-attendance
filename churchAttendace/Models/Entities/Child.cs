@@ -15,9 +15,8 @@ namespace churchAttendace.Models.Entities
         [StringLength(20)]
         public string? PhoneNumber { get; set; }
 
-        [Required(ErrorMessage = "اسم ولي الأمر مطلوب")]
         [StringLength(200, ErrorMessage = "اسم ولي الأمر يجب ألا يتجاوز 200 حرف")]
-        public string ParentName { get; set; } = string.Empty;
+        public string? ParentName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "هاتف ولي الأمر مطلوب")]
         [Phone(ErrorMessage = "رقم هاتف غير صحيح")]

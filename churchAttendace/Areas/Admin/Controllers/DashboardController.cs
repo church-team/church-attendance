@@ -28,7 +28,7 @@ namespace churchAttendace.Areas.Admin.Controllers
             var allowedClassIds = await _scope.GetAllowedClassIdsAsync();
             var attendanceQuery = _context.Attendance
                 .ApplyAttendanceScope(_scope, allowedStageIds, allowedClassIds)
-                .Where(a => a.Session!.SessionDate >= startOfMonth);
+                .Where(a => a.Session!.SessionDate >= startOfMonth && a.Session!.IsActive);
             var totalAttendance = await attendanceQuery.CountAsync();
             var presentAttendance = await attendanceQuery.CountAsync(a => a.IsPresent);
             var rate = totalAttendance == 0 ? 0 : (double)presentAttendance / totalAttendance * 100;
