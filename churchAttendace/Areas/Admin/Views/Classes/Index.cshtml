@@ -10,25 +10,23 @@
     };
 }
 
-<div class="app-card animate__animated animate__fadeInUp mb-4">
+<div class="app-card animate__animated animate__fadeInUp mb-3">
     <div class="app-card-header">
-        <div>
-            <h2 class="h6 mb-1">بحث في الفصول</h2>
-            <div class="text-muted small">فلترة النتائج حسب المرحلة أو الاسم</div>
-        </div>
+        <h2 class="h6 mb-0 d-none d-md-block">بحث في الفصول</h2>
+        <h2 class="h6 mb-0 d-md-none">بحث</h2>
         <a class="btn btn-primary app-btn" asp-action="Create">
             <i class="bi bi-plus-circle"></i>
             إضافة فصل
         </a>
     </div>
     <form method="get" class="row g-2 align-items-end">
-        <div class="col-12 col-md-6 col-lg-4">
-            <label class="form-label">بحث</label>
-            <input name="search" value="@ViewData["Search"]" class="form-control" placeholder="اسم الفصل" />
+        <div class="col-12 col-md-6">
+            <label class="form-label d-none d-md-block small">بحث</label>
+            <input name="search" value="@ViewData["Search"]" class="form-control form-control-sm" placeholder="اسم الفصل" />
         </div>
-        <div class="col-12 col-md-6 col-lg-4">
-            <label class="form-label">المرحلة</label>
-            <select name="stageId" class="form-select">
+        <div class="col-12 col-md-6">
+            <label class="form-label d-none d-md-block small">المرحلة</label>
+            <select name="stageId" class="form-select form-select-sm">
                 <option value="">كل المراحل</option>
                 @if (ViewData["Stages"] is SelectList stages)
                 {
@@ -39,8 +37,8 @@
                 }
             </select>
         </div>
-        <div class="col-12 col-md-6 col-lg-4">
-            <button type="submit" class="btn btn-outline-primary app-btn">
+        <div class="col-12">
+            <button type="submit" class="btn btn-outline-primary app-btn btn-sm">
                 <i class="bi bi-filter"></i>
                 تصفية
             </button>
@@ -50,7 +48,7 @@
 
 <div class="app-card animate__animated animate__fadeInUp">
     <div class="table-responsive">
-        <table class="table app-table align-middle">
+        <table class="table app-table app-table-mobile-ready align-middle">
             <thead>
                 <tr>
                     <th>اسم الفصل</th>
@@ -71,28 +69,33 @@
                     foreach (var item in Model)
                     {
                         <tr>
-                            <td>@item.Name</td>
-                            <td>@item.Stage?.Name</td>
-                            <td>
+                            <td data-label="اسم الفصل">
+                                <div class="d-flex align-items-start justify-content-between gap-2">
+                                    <span class="flex-grow-1">@item.Name</span>
+                                    <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary") d-md-none">@item.Stage?.Name</span>
+                                </div>
+                            </td>
+                            <td data-label="المرحلة" class="d-none d-md-table-cell">@item.Stage?.Name</td>
+                            <td data-label="الحالة">
                                 <span class="badge @(item.IsActive ? "bg-success-subtle text-success" : "bg-secondary-subtle text-muted")">
                                     @(item.IsActive ? "نشط" : "غير نشط")
                                 </span>
                             </td>
-                            <td class="text-end">
-                                <div class="d-flex justify-content-end gap-2 flex-wrap">
-                                    <a class="btn btn-outline-secondary app-btn btn-sm" asp-action="Details" asp-route-id="@item.Id">
+                            <td data-label="">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a class="btn btn-outline-secondary btn-sm" asp-action="Details" asp-route-id="@item.Id" title="عرض">
                                         <i class="bi bi-eye"></i>
-                                        عرض
+                                        <span class="ms-1">عرض</span>
                                     </a>
-                                    <a class="btn btn-outline-primary app-btn btn-sm" asp-action="Edit" asp-route-id="@item.Id">
+                                    <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@item.Id" title="تعديل">
                                         <i class="bi bi-pencil"></i>
-                                        تعديل
+                                        <span class="ms-1">تعديل</span>
                                     </a>
-                                    <form asp-action="Deactivate" asp-route-id="@item.Id" method="post">
+                                    <form asp-action="Deactivate" asp-route-id="@item.Id" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-outline-danger app-btn btn-sm">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="تعطيل">
                                             <i class="bi bi-x-circle"></i>
-                                            تعطيل
+                                            <span class="ms-1">تعطيل</span>
                                         </button>
                                     </form>
                                 </div>

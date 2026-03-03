@@ -10,21 +10,19 @@
     };
 }
 
-<div class="app-card animate__animated animate__fadeInUp mb-4">
+<div class="app-card animate__animated animate__fadeInUp mb-3">
     <div class="app-card-header">
-        <div>
-            <h2 class="h6 mb-1">فلترة الجلسات</h2>
-            <div class="text-muted small">اختر الفصل أو الفترة الزمنية</div>
-        </div>
+        <h2 class="h6 mb-0 d-none d-md-block">فلترة الجلسات</h2>
+        <h2 class="h6 mb-0 d-md-none">بحث</h2>
         <a class="btn btn-primary app-btn" asp-action="Create">
             <i class="bi bi-plus-circle"></i>
             إضافة جلسة
         </a>
     </div>
     <form method="get" class="row g-2 align-items-end">
-        <div class="col-12 col-md-6 col-lg-4">
-            <label class="form-label">الفصل</label>
-            <select name="classId" class="form-select">
+        <div class="col-12 col-md-6">
+            <label class="form-label d-none d-md-block small">الفصل</label>
+            <select name="classId" class="form-select form-select-sm">
                 <option value="">كل الفصول</option>
                 @if (ViewData["Classes"] is SelectList classes)
                 {
@@ -36,15 +34,15 @@
             </select>
         </div>
         <div class="col-6 col-md-3">
-            <label class="form-label">من</label>
-            <input type="date" name="from" value="@ViewData["From"]" class="form-control" />
+            <label class="form-label d-none d-md-block small">من</label>
+            <input type="date" name="from" value="@ViewData["From"]" class="form-control form-control-sm" />
         </div>
         <div class="col-6 col-md-3">
-            <label class="form-label">إلى</label>
-            <input type="date" name="to" value="@ViewData["To"]" class="form-control" />
+            <label class="form-label d-none d-md-block small">إلى</label>
+            <input type="date" name="to" value="@ViewData["To"]" class="form-control form-control-sm" />
         </div>
         <div class="col-12">
-            <button type="submit" class="btn btn-outline-primary app-btn">
+            <button type="submit" class="btn btn-outline-primary app-btn btn-sm">
                 <i class="bi bi-filter"></i>
                 تصفية
             </button>
@@ -54,10 +52,10 @@
 
 <div class="app-card animate__animated animate__fadeInUp">
     <div class="table-responsive">
-        <table class="table app-table align-middle">
+        <table class="table app-table app-table-mobile-ready align-middle">
             <thead>
                 <tr>
-                    <th>اسم الجلسة</th>
+                    <th>اسم الدرس</th>
                     <th>الفصل</th>
                     <th>التاريخ</th>
                     <th>ملاحظات</th>
@@ -76,25 +74,30 @@
                     foreach (var session in Model)
                     {
                         <tr>
-                            <td>@session.SessionName</td>
-                            <td>@session.Class?.Name</td>
-                            <td>@session.SessionDate.ToString("yyyy/MM/dd")</td>
-                            <td>@session.Notes</td>
-                            <td class="text-end">
-                                <div class="d-flex justify-content-end gap-2 flex-wrap">
-                                    <a class="btn btn-outline-secondary app-btn btn-sm" asp-action="Details" asp-route-id="@session.Id">
+                            <td data-label="اسم الدرس">
+                                <div class="d-flex align-items-start justify-content-between gap-2">
+                                    <span class="flex-grow-1">@session.SessionName</span>
+                                    <span class="badge bg-primary d-md-none">@session.Class?.Name</span>
+                                </div>
+                            </td>
+                            <td data-label="الفصل" class="d-none d-md-table-cell">@session.Class?.Name</td>
+                            <td data-label="التاريخ">@session.SessionDate.ToString("yyyy/MM/dd")</td>
+                            <td data-label="ملاحظات">@session.Notes</td>
+                            <td data-label="">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a class="btn btn-outline-secondary btn-sm" asp-action="Details" asp-route-id="@session.Id" title="عرض">
                                         <i class="bi bi-eye"></i>
-                                        عرض
+                                        <span class="ms-1">عرض</span>
                                     </a>
-                                    <a class="btn btn-outline-primary app-btn btn-sm" asp-action="Edit" asp-route-id="@session.Id">
+                                    <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@session.Id" title="تعديل">
                                         <i class="bi bi-pencil"></i>
-                                        تعديل
+                                        <span class="ms-1">تعديل</span>
                                     </a>
-                                    <form asp-action="Deactivate" asp-route-id="@session.Id" method="post">
+                                    <form asp-action="Deactivate" asp-route-id="@session.Id" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <button class="btn btn-outline-danger app-btn btn-sm">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="تعطيل">
                                             <i class="bi bi-x-circle"></i>
-                                            تعطيل
+                                            <span class="ms-1">تعطيل</span>
                                         </button>
                                     </form>
                                 </div>
